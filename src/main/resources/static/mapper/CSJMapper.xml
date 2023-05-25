@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.devdungeon.dao.CSJDAO">
+    <select id="boardList" parameterType="com.team.devdungeon.dto.CSJshowDTO" resultType="HashMap">
+        SELECT *
+        FROM board2view
+        <if test="searchType != null">
+			WHERE
+			<choose>
+				<when test="searchType == 'title'">board_title</when>
+				<when test="searchType == 'writer'">member_name</when>
+			</choose>
+			LIKE CONCAT('%', #{searchValue }, '%')
+        </if>
+        ORDER BY board_no DESC
+    </select>
+    <select id="boardFive" parameterType="String" resultType="HashMap">
+    	SELECT * FROM board2view
+    	WHERE real_date > DATE_ADD(now(), INTERVAL -1 DAY) 
+    	ORDER BY
+    	<choose>
+    		<when test="string == 'like'">board_like</when>
+    		<when test="string == 'view'">board_read</when>
+    	</choose>
+    	DESC, board_no DESC
+    	LIMIT 0, 5
+    </select>
+    <select id="eventList" parameterType="com.team.devdungeon.dto.CSJshowDTO" resultType="HashMap">
+        select e.event_no,e.tag_no ,e.event_title ,e.event_content ,e.event_date ,e.event_update ,e.status_no,e.event_end ,ef.event_file_no ,ef.event_file_name ,ef.event_file_extension ,ef.event_file_size from event e left join event_file ef ON e.event_no = ef.event_no 
+        WHERE (ef.event_file_type = 1 OR ef.event_file_no IS NULL) AND e.status_no = 1
+        <if test="searchType != null">
+			AND
+			<choose>
+				<when test="searchType == 'title'">event_title</when>
+			</choose>
+			LIKE CONCAT('%', #{searchValue }, '%')
+        </if>
+        ORDER BY event_no DESC
+    </select>
+    <select id="eventFive" resultType="HashMap">
+    	SELECT * FROM event
+    	ORDER BY event_no DESC
+    	LIMIT 0,5
+    </select>
+    
+    
+    <select id="detail" parameterType="Integer" resultType="HashMap">
+    	SELECT *
+    	FROM board2view
+    	WHERE board_no=#{bno}
+    </select>
+    <select id="eventPageDetail" parameterType="Integer" resultType="HashMap">
+    	SELECT *
+    	FROM event
+    	WHERE event_no=#{bno}
+    </select>
+    <insert id="eventParticipate" parameterType="HashMap">
+    	INSERT INTO event_player (member_no,event_no)
+    	SELECT (SELECT member_no FROM member WHERE member_id = #{member_id}),#{event_no} FROM DUAL
+    	WHERE NOT EXISTS (SELECT * FROM event_player 
+    	WHERE member_no = (SELECT member_no FROM member WHERE member_id = #{member_id}) AND event_no=#{event_no})
+    </insert>
+    <select id="memberProfile" parameterType="Integer" resultType="HashMap">
+    	SELECT *
+    	FROM member
+    	WHERE member_no=#{member_no}
+    </select>
+    <select id="commentList" parameterType="Integer" resultType="HashMap">
+    	SELECT *
+    	FROM commentview
+    	WHERE board_no=#{bno}
+    	ORDER BY comment_root,comment_no
+    </select>
+    
+    <update id="likethis" parameterType="Integer">
+    	UPDATE board
+    	SET
+    	board_like = board_like+1
+    	WHERE board_no = #{bno}
+    </update>
+    
+    <update id="readthis" parameterType="Integer">
+    	UPDATE board
+    	SET
+    	board_read = board_read+1
+    	WHERE board_no = #{bno}
+    </update>
+    
+    <update id="deleteByUser" parameterType="HashMap">
+    	UPDATE board
+    	SET
+    	status_no = 2
+    	WHERE board_no = #{bno} AND member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </update>
+   
+    <update id="commentDelete" parameterType="Integer">
+    	UPDATE board_comment
+    	SET
+    	status_no = 2
+    	WHERE IF((select comment_depth from board_comment where comment_no=#{cno})=0,comment_root,comment_no) = #{cno}
+    	
+
+    </update>
+    
+    <insert id="boardWrite" parameterType="HashMap">
+		INSERT INTO board
+		SET
+		member_no = (SELECT member_no FROM member WHERE member_id=#{member_id} )
+		,board_title = #{title}
+		,tag_no = #{tag}
+		,category_no = #{category}
+		,board_content = #{content}  
+		<selectKey resultType="int" keyProperty="number" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>  
+    </insert>
+    
+    <insert id="commentWrite" parameterType="HashMap" statementType="CALLABLE">
+    	{CALL
+    			RootComment(
+    				#{board_no, mode=IN,jdbcType=INTEGER}
+    				,#{writer, mode=IN,jdbcType=VARCHAR}
+    				,#{content, mode=IN,jdbcType=VARCHAR}
+    		)
+    	}
+    </insert>
+    
+    <insert id="replyCommentWrite" parameterType="HashMap">
+    	INSERT INTO board_comment
+    	SET
+    	board_no = #{board_no}
+    	,comment_writer = (SELECT member_no FROM member WHERE member_id = #{writer})
+    	,comment_content = #{content}
+    	,comment_depth = 1
+    	,comment_root = #{root}
+    </insert>
+    <select id="callCommentWriter" parameterType="Integer" resultType="String">
+    	SELECT member_id FROM commentview WHERE comment_no = #{cno}
+    </select>
+    <select id="qnaList" parameterType="com.team.devdungeon.dto.CSJshowDTO" resultType="HashMap">
+    	SELECT q.question_board_no ,(SELECT member_id FROM member WHERE member_no = q.member_no) AS member_id ,q.question_board_title ,q.question_board_date ,q.question_board_status ,q.question_board_content ,a.answer_board_no ,a.answer_board_title ,a.answer_board_date ,a.answer_board_update ,a.answer_board_content 
+    	FROM question_board q LEFT JOIN answer_board a ON q.question_board_no = a.question_board_no
+    	WHERE (answer_board_no = (SELECT max(answer_board_no) from answer_board WHERE question_board_no = a.question_board_no) or answer_board_no IS NULL) AND q.member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    	ORDER BY question_board_no DESC
+    </select>
+    <insert id="QuestionWrite" parameterType="HashMap">
+    	INSERT INTO question_board
+		SET
+		question_board_title=#{title},
+		question_board_content=#{content},
+		member_no= (SELECT member_no FROM member WHERE member_id=#{member_id})
+    </insert>
+    <select id="faqList" parameterType="com.team.devdungeon.dto.CSJshowDTO" resultType="HashMap">
+    	SELECT * FROM faq_board
+    </select>
+    
+    <update id="updateBoard" parameterType="HashMap">
+    	UPDATE board
+    	SET
+    	board_title = #{title}
+    	,board_content = #{content}
+    	,tag_no = #{tag}
+    	WHERE board_no = #{board_no}
+    </update>
+    
+    <insert id="banBoard" parameterType="HashMap" statementType="CALLABLE">
+    	{CALL
+    		banBoard(
+    				#{banBoard, mode=IN,jdbcType=INTEGER}
+    				,#{banMember, mode=IN,jdbcType=VARCHAR}
+    				,#{singoman, mode=IN,jdbcType=VARCHAR}
+    				,#{banWhy, mode=IN,jdbcType=VARCHAR}
+    		)
+    	}
+    </insert>
+    <insert id="banComment" parameterType="HashMap" statementType="CALLABLE">
+    	{CALL
+    		banComment(
+    				#{banBoard, mode=IN,jdbcType=INTEGER}
+    				,#{banComment, mode=IN,jdbcType=INTEGER}
+    				,#{banMember, mode=IN,jdbcType=VARCHAR}
+    				,#{singoman, mode=IN,jdbcType=VARCHAR}
+    				,#{banWhy, mode=IN,jdbcType=VARCHAR}
+    		)
+    	}
+    </insert>
+    
+    <select id="callBoardFile" parameterType="Integer" resultType="HashMap">
+    	SELECT *
+    	FROM board_file
+    	WHERE board_no = #{bno}
+    </select>
+    <select id="callEventFile" parameterType="Integer" resultType="HashMap">
+    	SELECT *
+    	FROM event_file
+    	WHERE event_no = #{bno} AND event_file_type=2
+    </select>
+    
+    <insert id="putBoardFile" parameterType="HashMap">
+    	INSERT INTO board_file
+    	SET
+    	board_no = #{board_no}
+    	,file_name = #{fileName}
+    	,file_extension = #{extension}
+    	,file_size = #{fileSize}
+    </insert>
+    
+  	<update id="addPoint" parameterType="HashMap">
+  		UPDATE point SET
+  		member_point = member_point + (SELECT change_points FROM change_kind WHERE change_no = #{pointType})
+  		WHERE member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+  	</update>
+</mapper>

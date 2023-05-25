@@ -1,0 +1,178 @@
+body{ margin:0; padding:0; }
+.table{	text-align: center; width:1200px; margin:0 auto;}
+.table-header{ background-color: #d3d3d3; }
+.container{	max-width:1200px; margin:0 auto;}
+.pagingBox{	width:700px; margin:0 auto; }
+.title{	text-align: left; }
+a {	text-decoration: none; color:black; }
+a:hover{ color:#ccc; }
+.pagingList{
+	margin:0;
+	padding:0;
+	list-style: none;
+	display: flex;
+	justify-content: start;
+	justify-content: center;
+	font-size: 13px;
+}
+.pageNo{	
+	cursor: pointer;
+	width:30px;
+	height:30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 5px;
+}
+.pageNo:hover{ background-color: #d3d3d3; }
+.page_btn{
+	background-color: #88a2a2;
+	margin:0 2px;
+	color:white;
+	font-weight: bold;
+	font-size: 14px;
+}
+.page_btn:hover{ background-color: #8887cc; }
+.write{	display: flex; justify-content: end; }
+.write_btn{
+	width:100px;
+	height:40px;
+	background-color: #88a2a2;
+	border:none;
+	border-radius: 5px;
+	font-size: 15px;
+	color:white;
+	font-weight: bold;
+}
+.searchForm{ display: flex; justify-content: center; }
+.search_btn{
+	background-color: #88a2a2;
+	border:none;
+	border-radius: 5px;
+	font-size: 15px;
+	width:60px;
+	height:30px;
+	color:white;
+	font-weight: bold;
+}
+
+/* HJHBoardDetail */
+.detailBox{	min-height:1000px; border:1px solid gray; }
+.detailTop{
+	margin:5px;
+	height:50px;
+	border:1px solid black;
+	font-size:20px;
+	font-weight:bold;
+	display: flex;
+}
+.detailTop_item{
+	width:100px;
+	height:100%;
+	line-height:50px;
+	margin-left:5px;
+	font-size: 20px;
+	text-align: center;
+}
+.detailTop_item:nth-child(1){ flex-grow:2; }
+.detailMid{
+	margin:5px;
+	min-height:790px;
+	border:1px solid black;
+	display: flex;
+	flex-direction: column;
+	font-size: 25px;
+}
+.detailMid_item{ margin-left:5px; }
+.userProfile{
+	font-size:15px;
+	margin-top:auto;
+	padding-bottom: 10px;
+}
+.btnBox{
+	margin:5px;
+	height:60px;
+	border:1px solid black;
+	text-align: center;
+	line-height:60px;
+}
+.btnBox_1{ display:inline-block; }
+.btnBox_2{ display:inline-block; float:right; }
+.detailBtn{
+	line-height:50px;
+	width:100px;
+	height:50px;
+	border:none;
+	border-radius: 5px;
+	color:white;
+	font-weight: bold;
+	margin-right:5px;
+}
+.boardList{
+	background-color: #90adac;
+	margin-bottom:5px;
+	float: right;
+}
+.commentBox{
+	margin:10px 5px 5px 5px;
+	height:70px;
+	line-height: 70px;
+}
+.commentText{
+	width:1000px; 
+	height:60px; 
+	font-size: 20px;
+	margin-left:5px;
+	border-radius: 5px;
+}
+.commentBtn{
+	margin-left:10px;
+	width:130px; 
+	height:60px;
+	border:none;
+	border-radius: 5px;
+	background-color: #A267AC;
+	color:white;
+	font-weight: bold;
+	line-height:60px;
+}
+.commentBtn_1{
+	width:40px;
+	height:40px;
+	border:none;
+	color:white;
+	border-radius: 5px;
+	line-height: 40px;
+}
+.comments{	margin-top:10px; height:100%; font-size:20px; }
+.commentWrited{ height: 60px; border-bottom: 1px solid black; line-height: 60px; }
+.commentWrited_But{	margin-top: 10px; height: 30px; line-height: 30px;}
+.commentDropdown{
+	height:50px;
+	float:right;
+	margin-right:20px;
+	border:none;
+	border-radius: 5px;
+	line-height: 50px;
+	background-color: white;
+}
+.subComment{ display: inline-block;	width:95%;}
+.c_commentBox{ display: inline-block; margin-top:10px;}
+.c_commentText {
+	width:1030px;
+	height:50px;
+	font-size: 20px;
+	margin-left:5px;
+	border-radius: 5px;
+}
+.c_commentBtn{
+	display: inline-block;
+	width:80px;
+	height:50px;
+	margin-left:10px;
+	border:none;
+	border-radius: 5px;
+	background-color: #A267AC;
+	color:white;
+	font-weight: bold;
+	line-height:50px;
+}

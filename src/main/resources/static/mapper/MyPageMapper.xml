@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mypage">
+
+    <select id="checkPassword" parameterType="HashMap" resultType="Integer">
+        SELECT COUNT(*)
+            FROM member
+                WHERE
+                    member_id = #{member_id}
+                AND
+                    member_pw = #{member_pw}
+    </select>
+
+    <select id="myIconListCount" parameterType="String" resultType="Integer">
+        SELECT COUNT(*) FROM product_log
+            WHERE
+                member_no = (SELECT member_no FROM member WHERE member_id = #{memberId})
+    </select>
+
+    <select id="icons" parameterType="HashMap" resultType="HashMap">
+        SELECT product_no, product_name, emo_img_name, emo_img_extension
+            FROM product p JOIN product_log pl ON p.product_no = pl.emo_no
+                WHERE
+                    pl.member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+        LIMIT #{startPage}, 6
+    </select>
+
+    <select id="profile" parameterType="String" resultType="MyPageDTO">
+        SELECT m.member_no, m.member_id, m.member_name, m.member_intro, m.icon_no, p.member_point, l.member_level, pif.pfp_name, pif.pfp_extension, emo.emo_img_name, emo.emo_img_extension
+            FROM member m
+                JOIN point p ON m.member_no = p.member_no
+                JOIN level l ON p.member_point >= l.level_to_point
+                LEFT JOIN profile_image_file pif ON m.member_no = pif.member_no
+        LEFT JOIN product emo ON m.icon_no = emo.product_no
+            WHERE
+                m.member_id = #{memberId}
+            AND
+                p.member_point >= l.level_to_point
+                    ORDER BY l.member_level DESC
+                        LIMIT 1
+    </select>
+
+    <update id="updateIcon" parameterType="HashMap">
+        UPDATE member
+            SET
+                icon_no = #{icon_no}
+            WHERE
+                member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </update>
+
+    <select id="selectUseIcon" parameterType="String" resultType="Integer">
+        SELECT icon_no
+            FROM member
+        WHERE
+            member_id = #{memberId}
+    </select>
+
+    <delete id="deleteIcon" parameterType="HashMap">
+        DELETE FROM product_log
+            WHERE
+                member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+            AND
+                emo_no = #{icon_no}
+    </delete>
+
+    <update id="introUpdate" parameterType="HashMap">
+        UPDATE member
+            SET
+                member_intro = #{member_intro}
+            WHERE
+                member_id = #{member_id}
+    </update>
+
+    <select id="pfpCount" parameterType="String" resultType="Integer">
+        SELECT COUNT(*)
+            FROM profile_image_file
+                WHERE
+                    member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </select>
+
+    <insert id="pfpInsert" parameterType="HashMap">
+        INSERT INTO profile_image_file
+            SET
+                member_no = (SELECT member_no FROM member WHERE member_id = #{member_id}),
+                pfp_name = #{pfp_name},
+                pfp_extension = #{pfp_extension},
+                pfp_size = #{pfp_size}
+    </insert>
+
+    <update id="pfpUpdate" parameterType="HashMap">
+        UPDATE profile_image_file
+            SET
+                pfp_name = #{pfp_name},
+                pfp_extension = #{pfp_extension},
+                pfp_size = #{pfp_size}
+        WHERE
+            member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </update>
+
+    <select id="userProfile" parameterType="String" resultType="MyPageDTO">
+        SELECT member_no, member_id, member_name, member_birth, member_email, member_tel
+            FROM member
+                WHERE
+                    member_id = #{memberId}
+    </select>
+
+    <update id="updateProfile">
+        UPDATE member
+            SET
+                member_name = #{member_name},
+                member_birth = #{member_birth},
+                member_email = #{member_email},
+                member_tel = #{member_tel}
+        WHERE
+            member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </update>
+
+    <select id="loginLog" parameterType="String" resultType="HashMap">
+        SELECT path, created_at, ip
+            FROM logs
+                WHERE
+                    params LIKE CONCAT('member_id=', #{memberId}, '&amp;', '%')
+    </select>
+
+    <select id="nowPassCheck" parameterType="HashMap" resultType="Integer">
+        SELECT COUNT(*)
+            FROM member
+                WHERE
+                    member_id = #{member_id}
+                AND
+                    member_pw = #{member_pw}
+    </select>
+
+    <update id="modifyPassword" parameterType="HashMap">
+        UPDATE member
+            SET
+                member_pw = #{member_pw}
+            WHERE
+                <choose>
+                    <when test="member_id != null">
+                    member_id = #{member_id}
+                    </when>
+                    <when test="member_email != null">
+                    member_email = #{member_email}
+                    </when>
+                </choose>
+    </update>
+
+    <insert id="msgReceive" parameterType="HashMap">
+        INSERT INTO message(post_member_no,get_member_no, message_title, message_content)
+		VALUES(
+		
+			(SELECT member_no FROM member WHERE member_id = '${post_member_no}'),
+			(SELECT member_no FROM member WHERE member_name = '${get_member_no}'),
+			'${message_title}','${message_content}'
+		)
+    </insert>
+    
+    <select id="messageIdCheck" parameterType="String" resultType="Integer">
+    	SELECT COUNT(member_name) FROM member WHERE member_name = '${member_name}'
+    </select>
+    
+    <select id="msgList" parameterType="com.team.devdungeon.dto.CSJshowDTO" resultType="HashMap">
+    	SELECT msg.*,
+    	(SELECT m.member_name FROM  member m WHERE m.member_no = msg.post_member_no) as member_name,
+    	ROW_NUMBER() OVER() as msg_no
+    	FROM message msg JOIN member m ON m.member_no = msg.post_member_no
+    	WHERE msg.get_member_no = (SELECT m.member_no FROM member m WHERE m.member_id = '${member_id}')
+        <if test="searchType != null">
+            AND
+            <choose>
+                <when test="searchType == 'title'">msg.message_title</when>
+                <when test="searchType == 'writer'">m.member_name</when>
+            </choose>
+            LIKE CONCAT('%', #{searchValue }, '%')
+        </if>
+    	ORDER BY msg.message_no DESC
+    </select>
+
+    <update id="msgRead" parameterType="String">
+        UPDATE message SET read_or_not = 1 WHERE message_no = '${msgNo}'
+    </update>
+    <delete id="msgDel" parameterType="String">
+        DELETE FROM message WHERE message_no = '${msgNo}'
+    </delete>
+    <select id="newMsgCnt" parameterType="String" resultType="Integer">
+        SELECT COUNT(read_or_not) FROM message
+        WHERE get_member_no = (SELECT member_no FROM member WHERE member_name = '${memberName}') AND read_or_not = 0
+    </select>
+    <select id="loginPoint" parameterType="String" resultType="HashMap">
+        SELECT p.member_point, l.member_level
+        FROM point p JOIN level l ON p.member_point >= l.level_to_point
+        WHERE
+        p.member_no = (SELECT m.member_no FROM member m WHERE m.member_name = '${memberName}')
+        AND p.member_point >= l.level_to_point
+        ORDER BY l.member_level DESC
+        LIMIT 1
+    </select>
+</mapper>

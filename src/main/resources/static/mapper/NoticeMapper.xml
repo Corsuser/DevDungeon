@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.team.devdungeon.dao.NoticeDAO">
+
+    <select id="noticeList"  parameterType="Integer"  resultType="HashMap">
+        SELECT notice_no,notice_title,admin_id,admin_no,notice_date,notice_like,notice_read,comment_cnt,tag_name, nno
+        FROM noticeview
+        <if test="searchType != null">
+         	WHERE 
+			<choose>
+				<when test="searchType == 'title'">notice_title</when>
+				<when test="searchType == 'writer'">admin_id</when>
+			</choose>
+			LIKE CONCAT('%', #{searchValue }, '%')
+        </if>
+        ORDER BY notice_no DESC
+        LIMIT #{startPage}, 10
+    </select>
+    
+    <select id="noticeFive" resultType="HashMap">
+    	SELECT * FROM noticeview
+    	ORDER BY notice_no DESC
+    	LIMIT 0,5
+    </select>
+    
+    <select id="noticeCount" parameterType="HashMap" resultType="Integer">
+        SELECT COUNT(*) FROM noticeview
+         <if test="searchType != null">
+			WHERE
+			<choose>
+				<when test="searchType == 'title'">notice_title</when>
+				<when test="searchType == 'writer'">member_id</when>
+			</choose>
+			LIKE CONCAT('%', #{searchValue }, '%')
+        </if>
+    </select>
+    
+    <insert id="noticeWrite" parameterType="HashMap">
+		INSERT INTO notice(admin_no, tag_no, notice_status, notice_title, notice_content)
+		VALUES((SELECT admin_no FROM admin WHERE admin_id = '${admin_id}'), 1, 1, '${notice_title}', '${notice_content}')
+   </insert>
+   
+   <update id="noticeUpdate" parameterType="HashMap">
+   		UPDATE notice SET notice_title= '${notice_title}', notice_content = '${notice_content}'
+   		WHERE notice_no = ${ notice_no }
+   </update>
+    
+    <select id="noticeDetail" parameterType="String" resultType="HashMap">
+  		SELECT notice_no, admin_id,notice_title,admin_no,notice_date,notice_like,notice_read,notice_content
+  		FROM noticeview
+  		WHERE notice_no = #{notice_no}
+    </select>
+    
+    <select id="detailComment" parameterType="String" resultType="HashMap">
+    	SELECT comment_no,notice_no,comment_writer,comment_depth,comment_root,comment_time,member_name,comment_content,member_id,comment_cnt
+    	FROM notice_commentview
+    	WHERE notice_no=${ notice_no }
+    	ORDER BY comment_root DESC;
+   </select>
+    
+    <insert id="noticeComment" parameterType="HashMap" statementType="CALLABLE">
+		{CALL
+             noticeRootComment(
+                #{notice_no, mode=IN,jdbcType=INTEGER}
+                ,#{member_name, mode=IN,jdbcType=VARCHAR}
+                ,#{comment_content, mode=IN,jdbcType=VARCHAR}
+         	 )
+         }
+   </insert>
+   
+   <insert id="noticeSubComment" parameterType="HashMap">
+		INSERT INTO notice_comment SET
+    	notice_no = #{notice_no}
+    	,comment_writer = (SELECT member_no FROM member WHERE member_name = #{ member_name })
+    	,comment_content = #{ subComment_content }
+    	,comment_depth = 1
+    	,comment_root = #{ comment_root }
+   </insert>
+   
+   <update id="noticeRead" parameterType="String">
+   		UPDATE notice SET notice_read = notice_read + 1 WHERE notice_no=${ notice_no }
+   </update>
+   
+   <update id="noticeLike" parameterType="String">
+   		UPDATE notice SET notice_like = notice_like + 1 WHERE notice_no=${ notice_no }
+   </update>
+   
+   <select id="noticeLikeAjax" parameterType="String" resultType="String">
+   		SELECT notice_like FROM noticeview WHERE notice_no = ${ notice_no }
+   </select>
+   
+   <update id="noticeDelete" parameterType="String">
+   		UPDATE notice SET notice_status = 2 WHERE notice_no = ${ notice_no }
+   </update>
+   
+    <update id="noticeCommentDel" parameterType="String">
+   		UPDATE notice_comment SET status_no = 2 WHERE
+   		if((SELECT comment_depth FROM notice_comment WHERE comment_no = ${ comment_root } ) = 0 , comment_root = ${ comment_no }, comment_no = ${ comment_no })
+   </update>
+   
+   <select id="callNoticeFile" parameterType="Integer" resultType="HashMap">
+   		SELECT * FROM notice_file 
+   		WHERE notice_no = #{notice_no}
+   </select>
+</mapper>

@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'org.springframework.boot' version '2.7.9-SNAPSHOT'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.team'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation 'javax.servlet:jstl'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    annotationProcessor 'org.projectlombok:lombok'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'   // json
+    // https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter
+	implementation group: 'com.github.pagehelper', name: 'pagehelper-spring-boot-starter', version: '1.4.6'
+    // https://mvnrepository.com/artifact/commons-io/commons-io, 파일 업로드
+    implementation 'commons-io:commons-io:2.11.0'
+    // https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload, 파일 업로드
+    implementation 'commons-fileupload:commons-fileupload:1.4'
+    implementation 'com.jcraft:jsch:0.1.55'
+    implementation 'org.apache.commons:commons-email:1.5'/*outlook email*/
+    
+	//log 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+  	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+  	implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
+  	
+  	//excel 
+  	implementation 'org.apache.poi:poi:5.2.0'
+    implementation 'org.apache.poi:poi-ooxml:5.2.0'
+  	
+}
+	
+	tasks.named('test') { useJUnitPlatform() }
+
+

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="store">
+
+    <select id="iconListCount" parameterType="HashMap" resultType="Integer">
+        SELECT COUNT(*) FROM product
+            WHERE
+            emoticon_authority = 1
+            AND
+            product_sell_cnt > 0
+        <if test="searchValue != null">
+            AND
+            product_name LIKE CONCAT('%', #{searchValue }, '%')
+        </if>
+    </select>
+
+    <select id="iconList" parameterType="HashMap" resultType="HashMap">
+        SELECT product_no, product_name, product_price, product_update, product_sell_cnt, emo_img_name, emo_img_extension, (SELECT member_name FROM member m WHERE m.member_no = p.member_no) as member_name
+            FROM product p
+                WHERE
+                    emoticon_authority = 1
+                AND
+                    product_sell_cnt > 0
+            <if test="searchValue != null">
+                AND
+                product_name LIKE CONCAT('%', #{searchValue }, '%')
+            </if>
+                ORDER BY product_no DESC
+        LIMIT #{startPage}, 8
+    </select>
+
+    <select id="selectProductLog" parameterType="HashMap" resultType="Integer">
+        SELECT COUNT(*) FROM product_log
+            WHERE
+                emo_no IN <foreach open="(" close=")" separator="," collection="cart" item="cart">#{cart}</foreach>
+            AND
+                member_no = (SELECT member_no FROM member WHERE member_id = #{member_id});
+    </select>
+
+    <insert id="shoppingBagInsert" parameterType="HashMap">
+        INSERT INTO shopping_cart  (member_no, product_no, sell_type)
+            VALUES
+                <foreach collection="cart" item="cart" separator=",">
+                ( (SELECT member_no FROM member WHERE member_id = #{member_id}), #{cart}, #{sell_type} )
+                </foreach>
+    </insert>
+
+    <select id="selectPayShoppingBag" parameterType="HashMap" resultType="HashMap">
+        SELECT emo_img_name, emo_img_extension, sc.product_no, product_name, product_price, (SELECT member_name FROM member WHERE member_id = (SELECT member_id FROM member WHERE member_no = p.member_no) ) as seller_name
+            FROM product p JOIN shopping_cart sc ON p.product_no = sc.product_no
+                WHERE
+                    emoticon_authority = 1
+                AND
+                    sc.sell_type = #{view_type}
+                AND
+                    sc.member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </select>
+
+    <select id="selectGiftShoppingBag" parameterType="String" resultType="HashMap">
+        SELECT emo_img_name, emo_img_extension, product_name, product_price, (SELECT member_name FROM member WHERE member_id = (SELECT member_id FROM member WHERE member_no = p.member_no) ) as seller_name
+            FROM product p JOIN shopping_cart sc ON p.product_no = sc.product_no
+                WHERE
+                    emoticon_authority = 1
+                AND
+                    sc.sell_type = 'gift'
+                AND
+                    sc.member_no = (SELECT member_no FROM member WHERE member_id = #{memberId})
+    </select>
+
+    <select id="couponList" parameterType="String" resultType="HashMap">
+        SELECT coupon_type, coupon_name, coupon_content, coupon_end
+            FROM couponBag cb JOIN coupon c ON cb.coupon_no = c.coupon_type
+        WHERE
+            cb.member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+        AND
+            cb.coupon_status = 0
+
+    </select>
+
+    <select id="checkProductCount" parameterType="String" resultType="HashMap">
+        SELECT p.product_no, p.product_sell_cnt
+            FROM product p JOIN shopping_cart sc ON p.product_no = sc.product_no
+                WHERE
+                    sc.member_no = (SELECT m.member_no FROM member m WHERE member_id = #{memberId})
+    </select>
+
+    <delete id="deleteCartOne" parameterType="HashMap">
+        DELETE FROM shopping_cart
+            WHERE
+                member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+            AND
+                sell_type = #{type}
+            <if test="product_no != null">
+            AND
+                product_no = #{product_no}
+            </if>
+    </delete>
+
+    <delete id="deleteCartList" parameterType="HashMap">
+        DELETE FROM shopping_cart
+            WHERE
+                product_no IN <foreach collection="product_no" separator="," open="(" close=")" item="product_no">#{product_no}</foreach>
+            AND
+                member_no = (SELECT m.member_no FROM member m WHERE member_id = #{member_id})
+    </delete>
+    
+    <select id="checkPoint" parameterType="String" resultType="Integer">
+        SELECT member_point
+            FROM point
+                WHERE
+                    member_no = (SELECT member_no FROM member WHERE member_id = #{memberId})
+    </select>
+
+    <update id="updatePoint" parameterType="HashMap">
+        UPDATE point
+            SET
+                member_point = member_point - #{pay_price}
+        WHERE
+            member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </update>
+
+    <insert id="insertPointLog" parameterType="HashMap">
+        INSERT INTO point_log (member_no, change_no, change_amount)
+            VALUES
+                ((SELECT member_no FROM member WHERE member_id = #{member_id}), 4, -#{pay_price})
+    </insert>
+
+    <update id="productSellCountDown" parameterType="HashMap">
+
+        UPDATE product
+            SET
+                product_sell_cnt = product_sell_cnt - 1
+            WHERE
+
+                product_no IN<foreach collection="icons" item="icons" open="(" close=")" separator=",">#{icons}</foreach>
+
+    </update>
+
+    <update id="couponUse">
+        UPDATE couponBag
+            SET
+                coupon_status = 1
+        WHERE
+            coupon_no = #{coupon_no}
+        AND
+            member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </update>
+
+    <insert id="insertProductNo" parameterType="HashMap">
+        INSERT INTO product_log (emo_no, member_no)
+            VALUES
+            <foreach collection="icons" item="icons" separator=",">
+                (#{icons}, (SELECT member_no FROM member WHERE member_id = #{member_id}))
+            </foreach>
+    </insert>
+
+    <delete id="deleteCart" parameterType="HashMap">
+        DELETE FROM shopping_cart
+            WHERE
+                member_no = (SELECT member_no FROM member WHERE member_id = #{member_id})
+    </delete>
+
+</mapper>
