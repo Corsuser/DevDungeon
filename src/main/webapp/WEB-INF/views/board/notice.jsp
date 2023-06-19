@@ -11,7 +11,7 @@
 <link type="text/css" rel="stylesheet" href="/css/HJHBoard.css">
 <link type="text/css" rel="stylesheet" href="/css/layout.css">
 <script type="text/javascript" src="/js/NoticePaging.js"></script>
-<script type="text/javascript" src="/js/search.js"></script>
+<!-- <script type="text/javascript" src="/js/search.js"></script> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <title>Notice</title>
 </head>
@@ -114,9 +114,8 @@ function moveNext(pageNo){	//페이지 뒤쪽 버튼
 				<br>
 				<!-- 검색 -->
 				<div class="searchForm">
-					<form action="/board/HJHBoard" method="get" onsubmit="return search()">
+					<form action="/notice" method="get" onsubmit="return search()">
 						<select name="searchType" id="searchType">
-							<option value="none">선택</option>
 							<option value="title" <c:if test='${ pages.searchType eq "title"}'>selected</c:if>>제목</option>
 							<option value="writer" <c:if test='${ pages.searchType eq "writer"}'>selected</c:if>>글쓴이</option>
 						</select>

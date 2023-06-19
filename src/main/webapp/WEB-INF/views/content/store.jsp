@@ -54,14 +54,6 @@
    }
 </style>
 <script>
-   function search(){	//검색 체크
-      let searchValue = document.getElementById("searchValue");
-      if(searchValue.value=="") {
-         alert("검색어를 입력해주세요");
-         return false;
-      }
-   }
-
    function moveBefore(pageNo){	//페이징 시작
       let searchValue = document.getElementById("searchValue");
       let url =  document.location.href.split("?",1);
