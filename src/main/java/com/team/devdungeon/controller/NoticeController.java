@@ -68,16 +68,13 @@ public class NoticeController {
 		for(Map<String, Object> m : detailComments) {
 			m.put("comment_content", textChangeUtil.changeText((String)m.get("comment_content")));
 		}
-		//이 게시글에 달린 파일 정보를 불러온다
 		Map<String,Object> noticeFile = noticeService.callNoticeFile(Integer.parseInt(notice_no));
 			if(noticeFile != null) {
 				String remotePath = sftpFileUtil.remotePath + noticeFile.get("file_name");
 				mv.addObject("noticeFile",noticeFile);
 
 		        try {
-		            // 원격 서버에서 이미지 파일 읽어오기
 		            InputStream inputStream = channelSftp.get(remotePath);
-			            // Inputstream -> byte[] 변환
 		            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		            byte[] buffer = new byte[1024];
 		            int len;
@@ -86,7 +83,6 @@ public class NoticeController {
 		            }
 		            baos.flush();
 		            byte[] imageData = baos.toByteArray();
-			            // byte[] -> Base64
 		            String imageDataString = Base64.getEncoder().encodeToString(imageData);
 			            mv.addObject("imageDataString", imageDataString);
 			        } catch (Exception e) {
@@ -113,7 +109,6 @@ public class NoticeController {
 		String notice_no = request.getParameter("notice_no");
 		String admin_id = (String)session.getAttribute("id");
 		if(notice_no==null) {
-//			String member_no = request.getParameter("member_no");
 			Map<String,Object> map = new HashMap<String, Object>();
 			map.put("notice_title", notice_title);
 			map.put("notice_content", notice_content);

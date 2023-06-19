@@ -16,13 +16,12 @@
     </select>
     <select id="boardFive" parameterType="String" resultType="HashMap">
     	SELECT * FROM board2view
-    	WHERE real_date > DATE_ADD(now(), INTERVAL -1 DAY) 
     	ORDER BY
     	<choose>
     		<when test="string == 'like'">board_like</when>
     		<when test="string == 'view'">board_read</when>
     	</choose>
-    	DESC, board_no DESC
+    	DESC
     	LIMIT 0, 5
     </select>
     <select id="eventList" parameterType="com.team.devdungeon.dto.CSJshowDTO" resultType="HashMap">

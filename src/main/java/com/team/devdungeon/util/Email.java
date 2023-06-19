@@ -21,20 +21,20 @@ public class Email {
     }
 
     public static void Mail(String email, String toName, String title, String msg) throws EmailException {
-        HtmlEmail mail = new HtmlEmail();//메일정보
+        HtmlEmail mail = new HtmlEmail();
         mail.setCharset("UTF-8");
         mail.setDebug(true);
-        mail.setHostName(hostName);//보내는 서버 설정 = 고정
-        mail.setAuthentication(emailAddr, passwd);//보내는 사람 인증 = 고정
-        mail.setSmtpPort(port);//사용할 port = 고정
-        mail.setStartTLSEnabled(true);//인증방법 = 고정
-        mail.setFrom(emailAddr, name);//보내는 사람 email, 보내는 사람 이름 = 고정
+        mail.setHostName(hostName);
+        mail.setAuthentication(emailAddr, passwd);
+        mail.setSmtpPort(port);
+        mail.setStartTLSEnabled(true);
+        mail.setFrom(emailAddr, name);
 
-        mail.addTo(email);// 받는 사람
-        mail.setSubject(title);//제목
-        mail.setMsg(msg);//본문내용
+        mail.addTo(email);
+        mail.setSubject(title);
+        mail.setMsg(msg);
 
-        mail.send();// 전송하기
+        mail.send();
     }
 
 }

@@ -70,7 +70,6 @@ public class NoticeService {
 	}
 
 	public Map<String, Object> callNoticeFile(int notice_no) {
-		// TODO Auto-generated method stub
 		return noticeDAO.callNoticeFile(notice_no);
 	}
 

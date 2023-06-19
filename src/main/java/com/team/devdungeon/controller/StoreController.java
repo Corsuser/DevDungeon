@@ -76,15 +76,15 @@ public class StoreController {
 
         int productLogCount = storeService.selectProductLog(userId, shoppingBag);
 
-        if(productLogCount < 1) {    // 구매한 아이콘이 없을 경우
+        if(productLogCount < 1) {
             int productInsert = storeService.shoppingBagInsert(userId, shoppingBag, sellType);
             if(productInsert != 0) {
-                result = 1; // 장바구니 정상 등록
+                result = 1;
             } else {
-                result = 3; // 이미 구매 장바구니에 있을 경우
+                result = 3;
             }
         } else {
-            result = 2; // 이미 구매한 아이콘이 있을 경우
+            result = 2;
         }
 
         return result;

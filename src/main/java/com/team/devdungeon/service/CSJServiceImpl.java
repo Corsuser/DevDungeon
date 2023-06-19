@@ -60,133 +60,111 @@ public class CSJServiceImpl implements CSJService {
 
 	@Override
 	public int likethis(int bno) {
-		// TODO Auto-generated method stub
 		return csjDAO.likethis(bno);
 	}
 
 	@Override
 	public int readthis(int bno) {
-		// TODO Auto-generated method stub
 		return csjDAO.readthis(bno);
 	}
 
 	@Override
 	public int commentWrite(Map<String, Object> comment) {
-		// TODO Auto-generated method stub
 		return csjDAO.commentWrite(comment);
 	}
 
 	@Override
 	public int ReplyWrite(Map<String, Object> comment) {
-		// TODO Auto-generated method stub
 		return csjDAO.csjReplyWrite(comment);
 	}
 
 	@Override
 	public PageInfo<Map<String, Object>> faqList(CSJshowDTO dto) {
-		// TODO Auto-generated method stub
 		return csjDAO.faqList(dto);
 	}
 
 	@Override
 	public void userDelete(Map<String, Object> delMap) {
-		// TODO Auto-generated method stub
 		csjDAO.userDelete(delMap);
 	}
 
 	@Override
 	public int updateBoard(Map<String, Object> updatemap) {
-		// TODO Auto-generated method stub
 		return csjDAO.updateBoard(updatemap);
 	}
 
 	@Override
 	public void banBoard(Map<String, Object> banMap) {
-		// TODO Auto-generated method stub
 		csjDAO.banBoard(banMap);
 	}
 
 	@Override
 	public void userCommentDelete(int cno) {
-		// TODO Auto-generated method stub
 		csjDAO.userCommentDelete(cno);
 	}
 
 	@Override
 	public void banComment(Map<String, Object> banMap) {
-		// TODO Auto-generated method stub
 		csjDAO.banComment(banMap);
 	}
 
 	@Override
 	public PageInfo<Map<String, Object>> eventList(CSJshowDTO dto) {
-		// TODO Auto-generated method stub
 		return csjDAO.eventList(dto);
 	}
 
 	@Override
 	public Map<String, Object> eventdetail(int bno) {
-		// TODO Auto-generated method stub
 		return csjDAO.eventdetail(bno);
 	}
 
 	@Override
 	public Map<String, Object> callBoardFile(int bno) {
-		// TODO Auto-generated method stub
 		return csjDAO.callBoardFile(bno);
 	}
 
 	@Override
 	public void putBoardFile(Map<String, Object> fileMap) {
-		// TODO Auto-generated method stub
 		csjDAO.putBoardFile(fileMap);
 	}
 
 	@Override
 	public PageInfo<Map<String, Object>> qnaList(CSJshowDTO dto) {
-		// TODO Auto-generated method stub
 		return csjDAO.qnaList(dto);
 	}
 
 	@Override
 	public int qnaWrite(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		return csjDAO.qnaWrite(map);
 	}
 
 	@Override
 	public Map<String, Object> callEventFile(int bno) {
-		// TODO Auto-generated method stub
 		return csjDAO.callEventFile(bno);
 	}
 
 	@Override
 	public int eventJoin(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		return csjDAO.eventJoin(map);
 	}
 
 	@Override
 	public void addPoint(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		csjDAO.addPoint(map);
 	}
 
 	@Override
 	public List<Map<String, Object>> eventFive() {
-		// TODO Auto-generated method stub
 		return csjDAO.eventFive();
 	}
 
 	@Override
 	public List<Map<String, Object>> boardFive(String string) {
-		// TODO Auto-generated method stub
 		return csjDAO.boardFive(string);
 	}
 
 	@Override
 	public String callCommentWriter(int cno) {
-		// TODO Auto-generated method stub
 		return csjDAO.callCommentWriter(cno);
 	}
 

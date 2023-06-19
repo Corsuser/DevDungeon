@@ -87,33 +87,26 @@ public class HJHBoardController {
 		mv.addObject("boardDetail",boardDetail);
 		mv.addObject("detailComments",detailComments);
 
-		//
-		//작성자의 프로필을 불러온다
 		int member_no = (int) boardDetail.get("member_no");
 		Map<String,Object> mem = csjService.memberProfile(member_no);
 
-		//이 게시글에 달린 파일 정보를 불러온다
 		Map<String,Object> boardFile = csjService.callBoardFile(Integer.parseInt(board_no));
 		if(boardFile != null) {
 			String remotePath = sftpFileUtil.remotePath + boardFile.get("file_name");
 			mv.addObject("boardFile",boardFile);
 
 			try {
-				// 원격 서버에서 이미지 파일 읽어오기
 				InputStream inputStream = channelSftp.get(remotePath);
 
-				// Inputstream -> byte[] 변환
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				byte[] buffer = new byte[1024];
 				int len;
 				while ((len = inputStream.read(buffer)) > -1 ) {
-					System.out.println("ㅎㅎㅎ");
 					baos.write(buffer, 0, len);
 				}
 				baos.flush();
 				byte[] imageData = baos.toByteArray();
 
-				// byte[] -> Base64
 				String imageDataString = Base64.getEncoder().encodeToString(imageData);
 
 				mv.addObject("imageDataString", imageDataString);
@@ -125,7 +118,6 @@ public class HJHBoardController {
 		mydto.setMember_intro(textChangeUtil.changeText(mydto.getMember_intro()));
 		mv.addObject("profile",mydto);
 
-		//
 		return mv;
 	}
 	@GetMapping("/board/HJHBoardWrite")
@@ -142,8 +134,8 @@ public class HJHBoardController {
 		String board_content = textChangeUtil.changeText((String)request.getParameter("writeContent"));
 		String board_no = request.getParameter("board_no");
 		String member_id = (String)session.getAttribute("member_id");
+
 		if(board_no==null) {
-//			String member_no = request.getParameter("member_no");
 			Map<String,Object> map = new HashMap<String, Object>();
 			map.put("board_title", board_title);
 			map.put("board_content", board_content);
@@ -152,9 +144,9 @@ public class HJHBoardController {
 
 			MultipartFile boardFile = fileReq.getFile("fileUpload");
 			if (boardFile.getSize() > 0) {
-				String originalFileName = boardFile.getOriginalFilename(); // 원래 파일 이름
-				String extension = FilenameUtils.getExtension(originalFileName); // 파일 확장자
-				String savedFileName = UUID.randomUUID().toString() + "." + extension; // 저장될 파일 이름
+				String originalFileName = boardFile.getOriginalFilename();
+				String extension = FilenameUtils.getExtension(originalFileName);
+				String savedFileName = UUID.randomUUID().toString() + "." + extension; 
 
 				int boardNo = (int) map.get("writtenNo");
 				String remotePath = sftpFileUtil.remotePath + savedFileName;

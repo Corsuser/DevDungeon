@@ -42,7 +42,7 @@ public class EventController {
 		mv.setViewName("board/eventBoard");
 
 		int pageSize = 6;
-		int category = 1; // 카테고리에 맞는 글만 불러오도록 쿼리 수정
+		int category = 1;
 		String searchType = request.getParameter("searchType");
 		String searchValue = request.getParameter("searchValue");
 		CSJshowDTO dto = new CSJshowDTO();
@@ -58,10 +58,7 @@ public class EventController {
 			if(m.get("event_file_no") != null) {
 				String remotePath = "/home/woori/ftp/files/" + m.get("event_file_name");
 		        try {
-		            // 원격 서버에서 이미지 파일 읽어오기
 		            InputStream inputStream = channelSftp.get(remotePath);
-
-		            // Inputstream -> byte[] 변환
 		            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		            byte[] buffer = new byte[1024];
 		            int len;
@@ -70,7 +67,6 @@ public class EventController {
 		            }
 		            baos.flush();
 		            byte[] imageData = baos.toByteArray();
-		            // byte[] -> Base64
 		            String imageDataString = Base64.getEncoder().encodeToString(imageData);
 		            m.put("imageDataString", imageDataString);
 		        } catch (Exception e) {
@@ -113,9 +109,7 @@ public class EventController {
 			mv.addObject("eventFile",eventFile);
 
 	        try {
-	            // 원격 서버에서 이미지 파일 읽어오기
 	            InputStream inputStream = channelSftp.get(remotePath);
-	            // Inputstream -> byte[] 변환
 	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	            byte[] buffer = new byte[1024];
 	            int len;
@@ -124,7 +118,6 @@ public class EventController {
 	            }
 	            baos.flush();
 	            byte[] imageData = baos.toByteArray();
-	            // byte[] -> Base64
 	            String imageDataString = Base64.getEncoder().encodeToString(imageData);
 	            mv.addObject("imageDataString", imageDataString);
 	        } catch (Exception e) {

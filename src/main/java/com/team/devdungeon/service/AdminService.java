@@ -21,12 +21,10 @@ public class AdminService {
 	@Autowired
 	private AdminDAO adminDAO;
 
-	//로그인 로그아웃
 	public AdminDTO adminLogin(AdminDTO adminDTO) {
 		return adminDAO.adminLogin(adminDTO);
 	}
 
-	//메인 대쉬보드
 	public List<Map<String, Object>> adminToday() {
 		return adminDAO.adminToday();
 	}
@@ -39,7 +37,6 @@ public class AdminService {
 		return adminDAO.adminVisitor();
 	}
 
-	//사용자 관리
 	public List<Map<String, Object>> adminMember(Map<String, Object> pages) {
 		return adminDAO.adminMember(pages);
 	}
@@ -48,7 +45,6 @@ public class AdminService {
 		adminDAO.memberUpdate(memberDTO);
 	}
 
-	//게시글 관리
 	public List<Map<String, Object>> AdminBoard(Map<String, Object> pages) {
 		return adminDAO.adminBoard(pages);
 	}
@@ -61,12 +57,10 @@ public class AdminService {
 		return adminDAO.AdminBoardDetail(boardNo);
 	}
 
-	//로그 데이터
 	public List<Map<String, Object>> AdminLog(Map<String, Object> pages) {
 		return adminDAO.AdminLog(pages);
 	}
 
-	//통계
 	public List<Map<String, Object>> LogDay() {
 		return adminDAO.LogDay();
 	}
@@ -91,7 +85,6 @@ public class AdminService {
 		return adminDAO.LogMonth();
 	}
 
-	//쿠폰
 	public List<Map<String, Object>> adminCoupon(Map<String, Object> pages) {
 		return adminDAO.adminCoupon(pages);
 	}
@@ -108,7 +101,6 @@ public class AdminService {
 		return adminDAO.AdminCouponView();
 	}
 
-	//QnA
 	public List<Map<String, Object>> adminQnA(Map<String, Object> pages) {
 		return adminDAO.adminQnA(pages);
 	}
@@ -125,7 +117,6 @@ public class AdminService {
 		adminDAO.adminAnswerChange(change);
 	}
 
-	//스토어
 	public List<Map<String, Object>> AdminStore(Map<String, Object> pages) {
 		return adminDAO.AdminStore(pages);
 	}
@@ -134,7 +125,6 @@ public class AdminService {
 		adminDAO.amdinStoreChange(change);
 	}
 
-	//이벤트
 	public List<Map<String, Object>> AdminEvent(Map<String, Object> pages) {
 		return adminDAO.AdminEvent(pages);
 	}
@@ -159,7 +149,6 @@ public class AdminService {
 		adminDAO.adminEventWrite(eventDTO);
 	}
 
-	//페이징 서치바 관련
 	public int boardCount(Map<String, Object> pages) {
 		return adminDAO.boardCount(pages);
 	}

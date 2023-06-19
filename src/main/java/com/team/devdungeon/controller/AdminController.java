@@ -66,7 +66,6 @@ public class AdminController {
 		return mv;
 	}
 
-	// admin 막대그래프
 	@GetMapping("/admin/AdminMainStatistics")
 	@ResponseBody
 	public List<Map<String, Object>> adminVisitor() {
@@ -76,7 +75,6 @@ public class AdminController {
 		return visitor;
 	}
 
-	// 로그인
 	@GetMapping("/adminLogin")
 	public String adminLogin() {
 		return "admin/adminLogin";
@@ -91,7 +89,7 @@ public class AdminController {
 		AdminDTO result = adminService.adminLogin(adminDTO);
 
 		if (result.getCount() == 1) {
-			// 세션 만들기
+
 			HttpSession session = request.getSession();
 			session.setAttribute("id", result.getAdmin_id());
 			session.setAttribute("member_name", "admin");
@@ -104,14 +102,12 @@ public class AdminController {
 
 	}
 
-	// 로그아웃
 	@GetMapping("/adminLogout")
 	public String logout(HttpSession session) {
 		session.invalidate();
 		return "redirect:/admin";
 	}
 
-	// 사용자관리
 	@GetMapping("/adminMember")
 	public ModelAndView adminMember(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			HttpServletRequest request) {
@@ -155,7 +151,6 @@ public class AdminController {
 		return "redirect:/adminMember?pageNo=" + pageNo;
 	}
 
-	// 게시글 관리
 	@GetMapping("/adminBoard")
 	public ModelAndView adminBoard(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			HttpServletRequest request) {
@@ -173,8 +168,6 @@ public class AdminController {
 		int totalCount = adminService.boardCount(pages);
 		int lastPage = (int) Math.ceil((double) totalCount / 10);
 
-		// System.out.println(startPage);
-
 		pages.put("startPage", startPage);
 		pages.put("lastPage", lastPage);
 
@@ -186,7 +179,7 @@ public class AdminController {
 
 		return mv;
 	}
-	// 게시글 Detail
+
 	@GetMapping("/adminBoardDetail")
 	public ModelAndView adminBoardDetail(@RequestParam(value = "board_no") int boardNo, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView("./admin/adminBoardDetail");
@@ -198,7 +191,6 @@ public class AdminController {
 		return mv;
 	}
 
-	// 게시글 삭제
 	@PostMapping("/adminBoard")
 	public String adminBoardDel(HttpServletRequest request) {
 
@@ -213,7 +205,6 @@ public class AdminController {
 		return "redirect:"+request.getParameter("url")+"?pageNo=" + pageNo;
 	}
 
-	// 로그 데이터
 	@GetMapping("/adminLog")
 	public ModelAndView adminLog(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			HttpServletRequest request) {
@@ -242,15 +233,12 @@ public class AdminController {
 		return mv;
 	}
 
-	// 통계
-
 	@GetMapping("/adminStatistics")
 	public ModelAndView adminStatistics() {
 		ModelAndView mv = new ModelAndView("./admin/adminStatistics");
 		return mv;
 	}
 
-	//엑셀로 받기
 	@ResponseBody
 	@GetMapping("/adminStatistics/{type}")
 	public String adminStatistics(HttpServletRequest request, HttpServletResponse response, @PathVariable String type) {
@@ -282,8 +270,6 @@ public class AdminController {
 		return "/adminStatistics";
 	}
 
-
-	// StatisticsMonth 막대그래프
 	@GetMapping("/admin/StatisticsMonth")
 	@ResponseBody
 	public List<Map<String, Object>> StatisticsMonth() {
@@ -293,7 +279,6 @@ public class AdminController {
 		return month;
 	}
 
-	// StatisticsDay 막대그래프
 	@GetMapping("/admin/StatisticsDay")
 	@ResponseBody
 	public List<Map<String, Object>> StatisticsDay() {
@@ -303,7 +288,6 @@ public class AdminController {
 		return day;
 	}
 
-	// StatisticsTime 막대그래프
 	@GetMapping("/admin/StatisticsTime")
 	@ResponseBody
 	public List<Map<String, Object>> StatisticsTime() {
@@ -313,7 +297,6 @@ public class AdminController {
 		return time;
 	}
 
-	// 쿠폰발급(페이징 서치바 추가)
 	@GetMapping("/adminCoupon")
 	public ModelAndView adminCoupon(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			HttpServletRequest request) {
@@ -330,8 +313,6 @@ public class AdminController {
 		int startPage = (pageNo * 10) - 10;
 		int totalCount = adminService.adminCouponCount(pages);
 		int lastPage = (int) Math.ceil((double) totalCount / 10);
-
-		// System.out.println(startPage);
 
 		pages.put("startPage", startPage);
 		pages.put("lastPage", lastPage);
@@ -376,7 +357,6 @@ public class AdminController {
 
 	}
 
-	// QnA
 	@GetMapping("/adminQnA")
 	public ModelAndView adminQnA(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			HttpServletRequest request) {
@@ -431,7 +411,6 @@ public class AdminController {
 		return "redirect:/adminQnA";
 	}
 
-	// 스토어
 	@GetMapping("/adminStore")
 	public ModelAndView adminStore(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			HttpServletRequest request) {
@@ -460,7 +439,6 @@ public class AdminController {
 		return mv;
 	}
 
-	// 스토어 상태변경
 	@PostMapping("/adminStore")
 	public String adminStoreChange(HttpServletRequest request) {
 		System.out.println(request.getParameter("product_no"));
@@ -479,7 +457,6 @@ public class AdminController {
 		return "redirect:/adminStore";
 	}
 
-	// 이벤트
 	@GetMapping("/adminEvent")
 	public ModelAndView adminEvent(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			HttpServletRequest request) {
@@ -527,12 +504,12 @@ public class AdminController {
 		
 		MultipartFile eventFile = fileReq.getFile("eventfile");
 
-		String originalFileName = eventFile.getOriginalFilename(); // 원래 파일 이름
-		String extension = FilenameUtils.getExtension(originalFileName); // 파일 확장자
-		String savedFileName = UUID.randomUUID().toString() + "." + extension; // 저장될 파일 이름
+		String originalFileName = eventFile.getOriginalFilename();
+		String extension = FilenameUtils.getExtension(originalFileName);
+		String savedFileName = UUID.randomUUID().toString() + "." + extension;
 		
 		int eventNo = eventDTO.getWrittenNo();
-		String remotePath = sftpFileUtil.remotePath + savedFileName;//수정
+		String remotePath = sftpFileUtil.remotePath + savedFileName;
 		long fileSize = eventFile.getSize();
 		
 		Map<String,Object> fileMap = new HashMap<String, Object>();
@@ -565,17 +542,6 @@ public class AdminController {
 		System.out.println("파일 크기 : "+ fileSize);
 
 		return "redirect:/adminEvent";
-		
-		/*else {
-			Map<String,Object> map = new HashMap<String, Object>();
-			map.put("event_title", eventDTO.getEvent_title());
-			map.put("event_content", eventDTO.getEvent_content());
-			
-			adminService.adminEventWrite(eventDTO);
-			
-			return "redirect:/adminEvent";
-		}*/
-
 	}
 	
 	@PostMapping("/adminEventModal")
@@ -589,14 +555,9 @@ public class AdminController {
 		
 		adminService.adminEventModal(eventDTO);
 		
-//		System.out.println(request.getParameter("winner"));
-//		System.out.println(request.getParameter("eventNo"));
-//		System.out.println(pageNo);
-		
 		return "redirect:/adminEvent?pageNo=" + pageNo;
 	}
-	
-	// 이벤트 삭제
+
 	@PostMapping("/adminEvent")
 	public String adminEventDel(HttpServletRequest request) {
 
@@ -612,7 +573,6 @@ public class AdminController {
 		return "redirect:/adminEvent?pageNo=" + pageNo;
 	}
 	
-	//신고게시물 관리
 	@GetMapping("/adminBanBoard")
 	public ModelAndView banBoard(@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			@RequestParam(value="board_no") int board_no,
@@ -624,8 +584,6 @@ public class AdminController {
 		int startPage = (pageNo * 10) - 10;
 		int totalCount = adminService.boardCount(pages);
 		int lastPage = (int) Math.ceil((double) totalCount / 10);
-
-		// System.out.println(startPage);
 
 		pages.put("startPage", startPage);
 		pages.put("lastPage", lastPage);

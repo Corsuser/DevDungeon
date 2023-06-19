@@ -58,7 +58,7 @@ public class CSJController {
 		mv.setViewName("board/CSJBoard");
 
 		int pageSize = 10;
-		int category = 2; // 카테고리에 맞는 글만 불러오도록 쿼리 수정
+		int category = 2;
 		String searchType = request.getParameter("searchType");
 		String searchValue = request.getParameter("searchValue");
 		CSJshowDTO dto = new CSJshowDTO();
@@ -121,9 +121,9 @@ public class CSJController {
 			int boardNo = (int) writemap.get("number");
 			MultipartFile boardFile = fileReq.getFile("board_file");
 			if (boardFile.getSize() > 0) {
-				String originalFileName = boardFile.getOriginalFilename(); // 원래 파일 이름
-				String extension = FilenameUtils.getExtension(originalFileName); // 파일 확장자
-				String savedFileName = UUID.randomUUID().toString() + "." + extension; // 저장될 파일 이름
+				String originalFileName = boardFile.getOriginalFilename();
+				String extension = FilenameUtils.getExtension(originalFileName);
+				String savedFileName = UUID.randomUUID().toString() + "." + extension;
 				
 				String remotePath = sftpFileUtil.remotePath + savedFileName;
 				long fileSize = boardFile.getSize();
@@ -223,9 +223,7 @@ public class CSJController {
 			mv.addObject("boardFile",boardFile);
 			System.out.println(boardFile.get("file_extension"));
 	        try {
-	            // 원격 서버에서 이미지 파일 읽어오기
 	            InputStream inputStream = channelSftp.get(remotePath);
-	            // Inputstream -> byte[] 변환
 	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	            byte[] buffer = new byte[1024];
 	            int len;
@@ -234,7 +232,6 @@ public class CSJController {
 	            }
 	            baos.flush();
 	            byte[] imageData = baos.toByteArray();
-	            // byte[] -> Base64
 	            String imageDataString = Base64.getEncoder().encodeToString(imageData);
 	            mv.addObject("imageDataString", imageDataString);
 	        } catch (Exception e) {
@@ -333,9 +330,9 @@ public class CSJController {
 		map.put("member_id", member_id);
 		int result = csjService.eventJoin(map);
 		
-		JSONObject json = new JSONObject();//json으로변환
+		JSONObject json = new JSONObject();
 		json.put("result", result);
-		return json.toString(); //json타입을 String화
+		return json.toString();
 	}
 
 	@GetMapping("/csjCloser")
@@ -440,9 +437,8 @@ public class CSJController {
 		map.put("content", textChangeUtil.changeText(request.getParameter("content")));
 		map.put("member_id", session.getAttribute("member_id"));
 		int result = (int)csjService.qnaWrite(map);
-		//json형태로 내보내기
-		JSONObject json = new JSONObject();//json으로변환
+		JSONObject json = new JSONObject();
 		json.put("result", result);
-		return json.toString(); //json타입을 String화
+		return json.toString();
 	}
 }

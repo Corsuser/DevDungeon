@@ -235,7 +235,7 @@
                   	</div>
                   </div>
 
-				   <%--조휘수 부분--%>
+				   <%--조회수 부분--%>
 				   <div class="read_top_list"><h3><div class="read_logo"></div> 조회수 Top.5</h3>
                   	<div class="ListFive">
                   	<table class="table table-striped">

@@ -173,11 +173,13 @@ function subComment_check(){
 				<h1 onclick="location.href='csjboard'">자 유 게 시 판 II</h1>
 				<div class="detailBody">
 					<div class="detailTitle">${det.board_title }</div>
-					<div class="detailInfo d-flex justify-content-around">
-						<span>글쓴이 : ${det.member_name } 
-							<span onclick="sendMessageTo('${det.member_name }')"><img src="/img/send.png" style="width:30px; height:30px;"></span>
-							<span onclick="sendPointTo('${det.member_name }')"><img src="/img/point.png" style="width:30px; height:30px;"></span><input type="hidden" id="detailWriter" value="${det.member_name }"></span> 
-						<span>${det.board_date } </span>
+					<div class="detailInfo">
+						<span>글쓴이 : ${det.member_name }
+							<c:if test="${sessionScope.member_id ne null && sessionScope.member_name ne det.member_name}">
+								<span onclick="sendMessageTo('${det.member_name }')"><img src="/img/send.png" style="width:30px; height:30px;"></span>
+								<span onclick="sendPointTo('${det.member_name }')"><img src="/img/point.png" style="width:30px; height:30px;"></span><input type="hidden" id="detailWriter" value="${det.member_name }"></span> 
+							</c:if>
+							<span>${det.board_date } </span>
 						<span>조회수 : ${det.board_read }</span>
 					</div>
 					<div class="detailContent" style="word-wrap: break-word;">
