@@ -13,3 +13,8 @@
 - **Framework** : Springboot(2.x)
 - **Database** : MariaDB 10.10
 - **ORM** : Mybatis
+
+## 맡은 역할
+- spring boot 사용하여 공지사항,게시판, 이벤트 페이지 구현
+- 라이브러리를 사용하지 않고 페이징 처리 로직을 직접 구현
+- 게시판에 댓글과 대댓글 작성할 수 있도록 구현
