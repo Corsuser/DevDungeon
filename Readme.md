@@ -8,6 +8,7 @@
 - 23년 3월 1일 ~ 23년 3월 31일 ( 1달 )
 
 ## 개발환경
+- 개발인원 : 6명
 - `Java 11`
 - **IDE** : intelliJ
 - **Framework** : Springboot(2.x)
